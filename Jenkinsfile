@@ -1,3 +1,25 @@
-git add Jenkinsfile
-git commit -m "Add Jenkinsfile"
-git push origin main
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('SonarCloud Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
+            }
+            steps {
+                sh '''
+                    sonar-scanner \
+                    -Dsonar.login=$SONAR_TOKEN
+                '''
+            }
+        }
+
+    }
+}
