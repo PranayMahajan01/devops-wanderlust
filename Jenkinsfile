@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        disableResume()
+    }
+
     stages {
 
         stage('Checkout') {
@@ -14,12 +18,16 @@ pipeline {
                 SONAR_TOKEN = credentials('sonar-token')
             }
             steps {
-                sh '''
-                    sonar-scanner \
-                    -Dsonar.login=$SONAR_TOKEN
-                '''
+                timeout(time: 10, unit: 'MINUTES') {
+                    sh '''
+                        sonar-scanner \
+                        -Dsonar.login=$SONAR_TOKEN \
+                        -Dsonar.qualitygate.wait=false
+                    '''
+                }
             }
         }
 
     }
 }
+
