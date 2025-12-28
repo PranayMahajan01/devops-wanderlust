@@ -30,7 +30,13 @@ pipeline {
                     dependency-check.sh \
                     --scan . \
                     --format HTML \
-                    --out dependency-check-report
+                    --out dependency-check-report \
+                    --data /tmp/dc-data \
+                    --noupdate \
+                    --failOnCVSS 11 \
+                    --disableAssembly \
+                    --disableNodeJS \
+                    --disableYarnAudit			
                 '''
             }
         }
