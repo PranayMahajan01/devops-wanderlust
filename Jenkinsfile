@@ -1,14 +1,9 @@
-pipeline {pipeline {
+pipeline {
     agent any
-
-    options {
-        disableResume()
-        durabilityHint('PERFORMANCE_OPTIMIZED')
-    }
 
     stages {
 
-        stage('Code') {
+        stage('Checkout') {
             steps {
                 checkout scm
             }
@@ -17,7 +12,6 @@ pipeline {pipeline {
         stage('SonarCloud Analysis') {
             environment {
                 SONAR_TOKEN = credentials('sonar-token')
-                NODE_OPTIONS = "--max-old-space-size=512"
             }
             steps {
                 timeout(time: 20, unit: 'MINUTES') {
@@ -33,10 +27,10 @@ pipeline {pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 sh '''
-                  dependency-check.sh \
-                  --scan . \
-                  --format HTML \
-                  --out dependency-check-report
+                    dependency-check.sh \
+                    --scan . \
+                    --format HTML \
+                    --out dependency-check-report
                 '''
             }
         }
@@ -44,11 +38,13 @@ pipeline {pipeline {
         stage('Trivy FS Scan') {
             steps {
                 sh '''
-                  trivy fs . \
-                  --severity HIGH,CRITICAL \
-                  --format table
+                    trivy fs . \
+                    --severity HIGH,CRITICAL \
+                    --format table
                 '''
             }
         }
+
     }
 }
+
